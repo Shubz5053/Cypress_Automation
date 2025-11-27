@@ -1,0 +1,22 @@
+{
+  "name": "cypress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^23.2.1",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.7",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "cypress": "^15.7.0"
+  },
+  "devDependencies": {
+    "cypress-localstorage-commands": "^2.2.8",
+    "multiple-cucumber-html-reporter": "^3.9.3"
+  }
+}
