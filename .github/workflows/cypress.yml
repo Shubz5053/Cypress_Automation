@@ -24,3 +24,6 @@ jobs:
 
       - name: Run Cypress tests
         run: npx cypress run
+
+      - name: generate report
+        run: node cucumber-html-report.js
