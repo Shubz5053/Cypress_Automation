@@ -23,7 +23,7 @@ jobs:
         run: npm install
 
       - name: Run Cypress tests
-        run: npx cypress run
+        run:  npx cypress run --spec "cypress\e2e\features\*"
 
       - name: generate report
         run: node cucumber-html-report.js
