@@ -34,10 +34,3 @@ jobs:
 
       - name: Generate HTML report
         run: node cucumber-html-report.js
-
-      - name: Upload HTML report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-report-${{ matrix.feature }}
-          path: cypress/reports/html
