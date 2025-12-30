@@ -1,9 +1,7 @@
 {
   "json": {
     "enabled": true,
-    "output": "jsonlogs/log.json",
-    "formatter": "cucumber-json-formatter.exe"
-    
+    "output": "cypress/reports/cucumber/${FEATURE}.json" 
   },
   "messages": {
     "enabled": true,

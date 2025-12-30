@@ -13,24 +13,52 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        feature:
-          - login
-          - signup
+        feature: [login, signup]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20.19.6
+          node-version: 20
 
-      - name: Install dependencies
-        run: npm install
+      - run: npm install
 
-      - name: Run Cypress tests (Parallel)
-        run: npx cypress run --spec "cypress/e2e/features/${{ matrix.feature }}/*.feature"
+      - name: Run Cypress tests
+        run: |
+          FEATURE=${{ matrix.feature }} \
+          npx cypress run --spec "cypress/e2e/features/${{ matrix.feature }}/*.feature"
 
-      - name: Generate HTML report
+      - name: Upload Cucumber JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-json-${{ matrix.feature }}
+          path: cypress/reports/cucumber/*.json
+
+  merge-report:
+    needs: cypress-parallel
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+
+      - name: Download JSON Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: cypress/reports/cucumber
+
+      - name: Generate HTML Report
         run: node cucumber-html-report.js
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-html-report
+          path: cypress/reports/html
