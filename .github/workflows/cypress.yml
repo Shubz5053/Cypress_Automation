@@ -1,14 +1,21 @@
-name: Cypress Tests
+name: Cypress Tests (Parallel)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  cypress-run:
+  cypress-parallel:
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        feature:
+          - login
+          - signup
 
     steps:
       - name: Checkout code
@@ -22,8 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress tests
-        run:  npx cypress run --spec "cypress\e2e\features\*"
+      - name: Run Cypress tests (Parallel)
+        run: npx cypress run --spec "cypress/e2e/features/${{ matrix.feature }}/*.feature"
 
-      - name: generate report
+      - name: Generate HTML report
         run: node cucumber-html-report.js
