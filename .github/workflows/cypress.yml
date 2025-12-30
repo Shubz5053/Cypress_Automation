@@ -1,4 +1,4 @@
-name: Cypress Tests (Parallel)
+name: Cypress Tests (Parallel Separate Reports)
 
 on:
   push:
@@ -13,52 +13,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        feature: [login, signup]
+        feature:
+          - login
+          - signup
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
-      - run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run Cypress tests
+      - name: Run Cypress - ${{ matrix.feature }}
         run: |
-          FEATURE=${{ matrix.feature }} \
-          npx cypress run --spec "cypress/e2e/features/${{ matrix.feature }}/*.feature"
+          npx cypress run \
+            --spec "cypress/e2e/features/${{ matrix.feature }}/**/*" \
+            --reporter-options reportDir=cypress/reports/${{ matrix.feature }}
 
-      - name: Upload Cucumber JSON
-        if: always()
+      - name: Upload Report - ${{ matrix.feature }}
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-json-${{ matrix.feature }}
-          path: cypress/reports/cucumber/*.json
-
-  merge-report:
-    needs: cypress-parallel
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm install
-
-      - name: Download JSON Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: cypress/reports/cucumber
-
-      - name: Generate HTML Report
-        run: node cucumber-html-report.js
-
-      - name: Upload HTML Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-html-report
-          path: cypress/reports/html
+          name: Cypress-Report-${{ matrix.feature }}
+          path: cypress/reports/${{ matrix.feature }}
